@@ -21,7 +21,7 @@
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            text:"[size=70][b]Cargando informacion [/b][/size]"
+            text:"[size=70][b]Pulsa comenzar[/b][/size]"
             markup: True
 
         Label:
@@ -34,7 +34,7 @@
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            text:"[size=70][b]Cargando informacion [/b][/size]"
+            text:"[size=70][b]Pulsa comenzar[/b][/size]"
             markup: True
 
         Label:
@@ -47,7 +47,15 @@
                 Rectangle:
                     pos: self.pos
                     size: self.size
-            text:"[size=70][b]Cargando informacion [/b][/size]"
+            text:"[size=70][b]Pulsa comenzar[/b][/size]"
             markup: True
+
+        BoxLayout
+            size_hint_y: None
+            height: "30dp"
+            id: remove
+            Button:
+                text: "Comenzar"
+                on_press: root.comenzar()
 
 

@@ -20,6 +20,7 @@ Builder.load_file('GUI.kv')
 class GUI(FloatLayout):
 
     flag = 0
+    comenza = False
 
     def __init__(self, **kwargs):
         super(GUI, self).__init__(**kwargs)
@@ -27,28 +28,38 @@ class GUI(FloatLayout):
         refresh_time = 5
         Clock.schedule_interval(self.timer, refresh_time)
 
+    def comenzar(self):
+        self.ids['remove'].clear_widgets()
+        self.ids['distance'].text = '[size=70][b]Cargando informacion [/b][/size]'
+        self.ids['response'].text = '[size=70][b]Cargando informacion [/b][/size]'
+        self.ids['metrics'].text = '[size=70][b]Cargando informacion [/b][/size]'
+        self.comenza = True
+
     def timer(self, dt):
         if self.flag == 0:
             arduino.readline()
             self.flag = 1
         else:
-            # Get data from serial port
-            value = str(arduino.readline()).replace("\n", "")
-            v = float(value)
-            self.ids['distance'].text = "[size=50][b]Medición: " + value + "cm[/b][/size]"
+            if self.comenza == True:
+                # Get data from serial port
+                value = str(arduino.readline()).replace("\n", "")
+                v = float(value)
+                self.ids['distance'].text = "[size=50][b]Medición: " + value + "cm[/b][/size]"
 
-            payload = "{\n\t\"measure\": {\n\t\t\"height\": " + value + "\n\t}\n}"
-            headers = {
-                'content-type': "application/json",
-                'cache-control': "no-cache",
-                'postman-token': "57acf325-4021-c728-4e75-693c082dc459"
-            }
+                payload = "{\n\t\"measure\": {\n\t\t\"height\": " + value + "\n\t}\n}"
+                headers = {
+                    'content-type': "application/json",
+                    'cache-control': "no-cache",
+                    'postman-token': "57acf325-4021-c728-4e75-693c082dc459"
+                }
 
-            url = "https://tinacos.herokuapp.com/containers/1/measures.json"
-            response = requests.request("POST", url, data=payload, headers=headers)
-            water_q = str(response.text.split("water_quantity\":\"")[1].replace("\"}", ""))
-            self.ids['response'].text = "[size=50][b]Cantidad de agua: " + water_q + " litros[/b][/size]"
-            self.ids['metrics'].text= '[size=20][b]Consulta tus métricas en: https://tinacos.herokuapp.com/containers/1/metrics[/b][/size]'
+                url = "https://tinacos.herokuapp.com/containers/1/measures.json"
+                response = requests.request("POST", url, data=payload, headers=headers)
+                water_q = str(response.text.split("water_quantity\":\"")[1].replace("\"}", ""))
+                self.ids['response'].text = "[size=50][b]Cantidad de agua: " + water_q + " litros[/b][/size]"
+                self.ids[
+                    'metrics'].text = '[size=20][b]Consulta tus métricas en: https://tinacos.herokuapp.com/containers/1/metrics[/b][/size]'
+
 
 # Main App class
 class SerialDataApp(App):
